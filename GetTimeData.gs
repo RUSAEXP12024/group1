@@ -20,18 +20,16 @@ function writeTimeInfoToSheet() {
   const timeData = JSON.parse(response.getContentText());
   
   // 日付を分割して年、月、日を取得
-  const dateParts = timeData.date.split("-");
-  const year = dateParts[0];
-  const month = dateParts[1];
-  const day = dateParts[2];
+  const dateTime = new Date (timeData.dateTime);
+  const year = dateTime.getFullYear();
+  const month = ("0" + (dateTime.getMonth() + 1)).slice(-2);
+  const day = ("0" + dateTime.getDate()).slice(-2);
+  const monthDay = `${month}/${day}`;
   
   // 現在のシートの最後の行の次にデータを書き込む
   const lastRow = sheet.getLastRow() + 1;
   
   // 年、月、日、時刻、タイムゾーンをシートに書き込む
-  sheet.getRange(`A${lastRow}`).setValue(year);
-  sheet.getRange(`B${lastRow}`).setValue(month);
-  sheet.getRange(`C${lastRow}`).setValue(day);
-  sheet.getRange(`D${lastRow}`).setValue(timeData.time);
-  sheet.getRange(`E${lastRow}`).setValue(timeData.timeZone);
+  sheet.getRange(lastRow,1).setValue(year);
+  sheet.getRange(lastRow,2).setValue(monthDay);
 }
