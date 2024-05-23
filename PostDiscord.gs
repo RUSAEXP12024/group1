@@ -11,7 +11,8 @@ function takeScreenshotAndPostToDiscord() {
   var temp1=readBottomCellValue('B');
   var temp2=readBottomCellValue('C');
 
-  var message = "現在の室内温度は"+temp1+"、室内湿度は"+temp2+"です。";
+  var message = "現在の室内温度は"+temp1+"度、室内湿度は"+temp2+"%です。\nダッシュボードの詳細はこちらから↓ \n https://lookerstudio.google.com/embed/u/0/reporting/559def9a-4090-471e-8b7a-eebd6abc420e/page/lwSzD";
+
   // APIFLASHのスクリーンショットAPIのエンドポイント
   var apiUrl = 'https://api.apiflash.com/v1/urltoimage';
 
@@ -21,7 +22,9 @@ function takeScreenshotAndPostToDiscord() {
     url: websiteUrl,
     full_page: true, // ページ全体をキャプチャする場合はtrueに設定
     format: 'png',   // 画像の形式を指定
-    viewport: '1440x900' // ウェブページのサイズを指定
+    viewport: '1440x900', // ウェブページのサイズを指定
+    fresh:true,
+    ttl:'0'
   };
 
   // APIFLASHにリクエストを送信
@@ -34,44 +37,36 @@ function takeScreenshotAndPostToDiscord() {
   if (response.getResponseCode() == 200) {
     // スクリーンショットの取得に成功した場合
     var imageBlob = response.getBlob().setName('screenshot.png');
-    
+
     // 取得した画像をDiscordに送信する
-    postImageToDiscord(discordWebhookUrl, imageBlob,
-    message);
+    postImageToDiscord(discordWebhookUrl, imageBlob, message);
   } else {
     // スクリーンショットの取得に失敗した場合
     Logger.log('Failed to take screenshot: ' + response.getContentText());
   }
 }
-
-
-// Discordに画像を送信する関数
-// Discordに画像を送信する関数
-function postImageToDiscord(webhookUrl, imageBlob,message) {
-  var timestamp = new Date().getTime(); // 現在のタイムスタンプを取得
-  var filename = 'screenshot_' + timestamp + '.png'; // 一意のファイル名を生成
-  var data = {
-    content:message,
-        file: {
-      "name": filename,
-      "blob": imageBlob
-    }
+function postImageToDiscord(webhookUrl, imageBlob, message) {
+  var formData = {
+    "content": message,
+    "file": imageBlob
   };
 
   var options = {
     method: 'post',
-    payload: data,
+    payload: formData,
     muteHttpExceptions: true
   };
 
   var response = UrlFetchApp.fetch(webhookUrl, options);
 
   if (response.getResponseCode() === 200) {
-    Logger.log('Screenshot sent to Discord successfully.');
+    Logger.log('Screenshot and message sent to Discord successfully.');
   } else {
-    Logger.log('Failed to send screenshot to Discord: ' + response.getContentText());
+    Logger.log('Failed to send screenshot and message to Discord: ' + response.getContentText());
   }
 }
+
+
 function readBottomCellValue(a) {
   // スプレッドシートのIDを指定
   var spreadsheetId = '1dUyWo1v0lG_b7z260tWtZRClzfxEtDax1SBtPwfgVvw';
