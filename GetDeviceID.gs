@@ -7,9 +7,3 @@ function GetDeviceId(){
     var reply = UrlFetchApp.fetch(url, options);
     Logger.log(reply)
 }
-
-/* curl -X GET -H "authorization: Bearer C4mDoyGo3RLoN_RJf-jn1GIpDgDBNEbTHOjGU1YxTcg.xiVYXKWKbN8RhXJsIpqtOJ_g4z-cCl-f45XzhwRRllU" "https://api.nature.global/1/appliances"
-
-
-
-*/

@@ -7,10 +7,6 @@ function getAppliancesData() {
     'Authorization': 'Bearer ' + REMO_ACCESS_TOKEN,
   };
 
-  var postData = {
-
-  };
-
   var options = {
     'method' : 'get',
     'headers' : headers,
